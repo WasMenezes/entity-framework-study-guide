@@ -20,10 +20,8 @@ namespace SistemaPedidos.Data.Configurations
             builder.Property(p => p.Estado).HasColumnType("CHAR(2)").IsRequired();
             builder.Property(p => p.Cidade).HasMaxLength(60).IsRequired();
 
-            builder
-                .HasIndex(i => i.Telefone)
-                .IsUnique()
-                .IsClustered(); 
+
+            builder.HasIndex(i => i.Telefone).HasName("idx_cliente_telefone");
         }
     }
 }

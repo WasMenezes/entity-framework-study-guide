@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SistemaPedidos.Migrations
 {
-    public partial class primeiramigration : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -87,19 +87,28 @@ namespace SistemaPedidos.Migrations
                         principalTable: "Pedidos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PedidoItens_Produtos_ProdutoId",
+                        column: x => x.ProdutoId,
+                        principalTable: "Produtos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clientes_Phone",
+                name: "idx_cliente_telefone",
                 table: "Clientes",
-                column: "Phone",
-                unique: true)
-                .Annotation("SqlServer:Clustered", true);
+                column: "Phone");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PedidoItens_PedidoId",
                 table: "PedidoItens",
                 column: "PedidoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PedidoItens_ProdutoId",
+                table: "PedidoItens",
+                column: "ProdutoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pedidos_ClienteId",
@@ -113,10 +122,10 @@ namespace SistemaPedidos.Migrations
                 name: "PedidoItens");
 
             migrationBuilder.DropTable(
-                name: "Produtos");
+                name: "Pedidos");
 
             migrationBuilder.DropTable(
-                name: "Pedidos");
+                name: "Produtos");
 
             migrationBuilder.DropTable(
                 name: "Clientes");

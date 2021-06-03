@@ -50,8 +50,7 @@ namespace SistemaPedidos.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Telefone")
-                        .IsUnique()
-                        .IsClustered();
+                        .HasDatabaseName("idx_cliente_telefone");
 
                     b.ToTable("Clientes");
                 });
@@ -122,6 +121,8 @@ namespace SistemaPedidos.Migrations
 
                     b.HasIndex("PedidoId");
 
+                    b.HasIndex("ProdutoId");
+
                     b.ToTable("PedidoItens");
                 });
 
@@ -171,7 +172,15 @@ namespace SistemaPedidos.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SistemaPedidos.Domain.Produto", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Pedido");
+
+                    b.Navigation("Produto");
                 });
 
             modelBuilder.Entity("SistemaPedidos.Domain.Pedido", b =>

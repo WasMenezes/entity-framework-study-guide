@@ -2,6 +2,7 @@
 using SistemaPedidos.Domain;
 using SistemaPedidos.ValueObjects;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SistemaPedidos
@@ -12,7 +13,9 @@ namespace SistemaPedidos
         {
             //InserirDados();
             //InserirDadosEmMassa();
-            ConsultarDados();
+            //ConsultarDados();
+            //CadastrarPedido();
+            ConsultarPedidoCarregamentoAdiantado();
         }
 
         private static void InserirDados()
@@ -79,5 +82,48 @@ namespace SistemaPedidos
                 db.Clientes.FirstOrDefault(p => p.Id == cliente.Id);
             }
         }
+
+        private static void CadastrarPedido()
+        {
+            using var db = new Data.ApplicationContext();
+
+            var cliente = db.Clientes.FirstOrDefault();
+            var produto = db.Produtos.FirstOrDefault();
+
+            var pedido = new Pedido
+            {
+                ClientID = cliente.Id,
+                IniciadoEm = DateTime.Now,
+                FinalizadoEm = DateTime.Now,
+                Observacao = "Pedido Teste",
+                Status = StatusPedido.Analise,
+                TipoFrete = TipoFrete.SemFrete,
+                Itens = new List<PedidoItem>
+                {
+                    new PedidoItem
+                    {
+                        ProdutoId = produto.Id,
+                        Desconto = 0,
+                        Quantidade = 1,
+                        Valor = 10,
+                    }
+                }
+            };
+            db.Pedidos.Add(pedido);
+
+            db.SaveChanges();
+        }
+        
+        private static void ConsultarPedidoCarregamentoAdiantado()
+        {
+            using var db = new Data.ApplicationContext();
+             var pedidos = db.Pedidos
+                 .Include(p=>p.Itens)
+                 .ThenInclude(p => p.Produto)
+                 .ToList();
+
+             Console.WriteLine(pedidos.Count);
+        }
     }
+
 }
