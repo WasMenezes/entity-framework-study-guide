@@ -15,7 +15,8 @@ namespace SistemaPedidos
             //InserirDadosEmMassa();
             //ConsultarDados();
             //CadastrarPedido();
-            ConsultarPedidoCarregamentoAdiantado();
+            //ConsultarPedidoCarregamentoAdiantado();
+            AtualizarDados();
         }
 
         private static void InserirDados()
@@ -123,6 +124,29 @@ namespace SistemaPedidos
                  .ToList();
 
              Console.WriteLine(pedidos.Count);
+        }
+
+        private static void AtualizarDados()
+        {
+            using var db = new Data.ApplicationContext();
+            // var cliente = db.Clientes.Find(1);
+
+            var cliente = new Cliente
+            {
+                Id = 1
+            };
+
+            var clienteDescontectado = new
+            { 
+                Nome = "Cliente Desconectado Passo 3",
+                Telefone = "999063548"
+            };
+            
+            db.Attach(cliente);
+            db.Entry(cliente).CurrentValues.SetValues(clienteDescontectado);
+
+            //db.Clientes.Update(cliente);
+            db.SaveChanges();
         }
     }
 
