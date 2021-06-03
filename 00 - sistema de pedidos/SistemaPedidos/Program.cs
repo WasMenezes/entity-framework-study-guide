@@ -1,6 +1,8 @@
-﻿using SistemaPedidos.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using SistemaPedidos.Domain;
 using SistemaPedidos.ValueObjects;
 using System;
+using System.Linq;
 
 namespace SistemaPedidos
 {
@@ -9,7 +11,8 @@ namespace SistemaPedidos
         static void Main(string[] args)
         {
             //InserirDados();
-            InserirDadosEmMassa();
+            //InserirDadosEmMassa();
+            ConsultarDados();
         }
 
         private static void InserirDados()
@@ -58,6 +61,23 @@ namespace SistemaPedidos
 
             var registros = db.SaveChanges();
             Console.WriteLine($"Total Registro(s): {registros}");
+        }
+
+        private static void ConsultarDados()
+        {
+            using var db = new Data.ApplicationContext();
+            //var consultaPorSintaxe = (from c in db.Clientes where c.Id > 0 select c).ToList();
+            var consultaPorMetodo = db.Clientes
+                .Where(p => p.Id > 0)
+                .OrderBy(p=>p.Id)
+                .ToList();
+
+            foreach(var cliente in consultaPorMetodo)
+            {
+                Console.WriteLine($"Consultando Cliente: {cliente.Id}");
+                ///db.Clientes.Find(cliente.Id);
+                db.Clientes.FirstOrDefault(p => p.Id == cliente.Id);
+            }
         }
     }
 }
