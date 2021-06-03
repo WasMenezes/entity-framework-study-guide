@@ -16,7 +16,8 @@ namespace SistemaPedidos
             //ConsultarDados();
             //CadastrarPedido();
             //ConsultarPedidoCarregamentoAdiantado();
-            AtualizarDados();
+            //AtualizarDados();
+            RemoverRegistro();
         }
 
         private static void InserirDados()
@@ -146,6 +147,18 @@ namespace SistemaPedidos
             db.Entry(cliente).CurrentValues.SetValues(clienteDescontectado);
 
             //db.Clientes.Update(cliente);
+            db.SaveChanges();
+        }
+
+        private static void RemoverRegistro()
+        {
+            using var db = new Data.ApplicationContext();
+            //var cliente = db.Clientes.Find(1);
+            var cliente = new Cliente { Id = 1 };
+            //db.Clientes.Remove(cliente);
+            //db.Remove(cliente);
+            db.Entry(cliente).State = EntityState.Deleted;
+
             db.SaveChanges();
         }
     }
