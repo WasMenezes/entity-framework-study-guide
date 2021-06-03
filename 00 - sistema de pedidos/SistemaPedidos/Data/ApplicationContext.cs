@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SistemaPedidos.Data.Configurations;
 using SistemaPedidos.Domain;
+using System;
 using System.Linq;
 
 namespace SistemaPedidos.Data
@@ -18,7 +19,11 @@ namespace SistemaPedidos.Data
             optionsBuilder
                 .UseLoggerFactory(_logger)
                 .EnableSensitiveDataLogging()
-                .UseSqlServer("Data source=(localdb)\\mssqllocaldb;Initial Catalog=SistemaPedidos; Integrated Security=true");
+                .UseSqlServer("Data source=(localdb)\\mssqllocaldb;Initial Catalog=SistemaPedidos; Integrated Security=true",
+                p=>p.EnableRetryOnFailure(
+                    maxRetryCount: 2, 
+                    maxRetryDelay: TimeSpan.FromSeconds(5), 
+                    errorNumbersToAdd: null));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
