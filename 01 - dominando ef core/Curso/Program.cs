@@ -93,5 +93,22 @@ namespace DominandoEFCore
 
             Console.WriteLine(mensagem);
         }
+        static void ExecuteSQL()
+        {
+            using var db = new Data.ApplicationContext();
+            //Primeira Opção
+            using(var cmd = db.Database.GetDbConnection().CreateCommand())
+            {
+                cmd.CommandText = "SELECT 1";
+                cmd.ExecuteNonQuery();
+            }
+
+            //Segunda Opção
+            var descricao = "Teste";
+            db.Database.ExecuteSqlRaw("update departamentos set descricao={0} where id=1", descricao);
+
+            //Terceira Opção 
+            db.Database.ExecuteSqlInterpolated($"update departamentos set descricao={descricao} where id=1");
+        }
     }
 }
