@@ -11,7 +11,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            SqlInjection();
+            MigracoesPendentes();
         }
 
         static void HealthCheckBancoDeDados()
@@ -128,6 +128,20 @@ namespace DominandoEFCore
             foreach (var departamento in db.Departamentos.AsNoTracking())
             {
                 Console.WriteLine($"Id {departamento.Id}, Descricao: {departamento.Descricao}");
+            }
+        }
+
+        static void MigracoesPendentes()
+        {
+            using var db = new Data.ApplicationContext();
+
+            var migracoesPendentes = db.Database.GetPendingMigrations();
+
+            Console.WriteLine($"TOtal: {migracoesPendentes.Count()}");
+
+            foreach(var migracao in migracoesPendentes)
+            {
+                Console.WriteLine($"Migracao: {migracao}");
             }
         }
     }
