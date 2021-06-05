@@ -11,11 +11,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            new Data.ApplicationContext().Departamentos.AsNoTracking().Any();
-            _count = 0;
-            GerenciarEstadoDaConexao(false);
-            _count = 0;
-            GerenciarEstadoDaConexao(true);
+            SqlInjection();
         }
 
         static void HealthCheckBancoDeDados()
@@ -109,6 +105,30 @@ namespace DominandoEFCore
 
             //Terceira Opção 
             db.Database.ExecuteSqlInterpolated($"update departamentos set descricao={descricao} where id=1");
+        }
+        static void SqlInjection()
+        {
+            using var db = new Data.ApplicationContext();
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
+
+            db.Departamentos.AddRange(
+                new Domain.Departamento { Descricao = "Departamento 01" },
+                new Domain.Departamento { Descricao = "Departamento 02" });
+            db.SaveChanges();
+
+            var descricao = "Teste ' or 1 = '1";
+            //Jeito errado, permite o SQL Injection
+            db.Database.ExecuteSqlRaw($"update departamentos set descricao='AtaqueSqlInjection' where descricao='{descricao}'");
+            
+            //Jeito certo, não permite o SQL Injection
+            db.Database.ExecuteSqlRaw("update departamentos set descricao='AtaqueSqlInjection' where descricao={0}", descricao);
+
+
+            foreach (var departamento in db.Departamentos.AsNoTracking())
+            {
+                Console.WriteLine($"Id {departamento.Id}, Descricao: {departamento.Descricao}");
+            }
         }
     }
 }
