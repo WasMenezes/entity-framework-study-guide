@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
+using System.Linq;
 
 namespace DominandoEFCore
 {
@@ -11,6 +13,38 @@ namespace DominandoEFCore
             GapDoEnsureCreated();
         }
 
+        static void HealthCheckBancoDeDados()
+        {
+            using var db = new Data.ApplicationContext();
+            var canConnect = db.Database.CanConnect();
+
+            if (canConnect)
+            {
+                Console.WriteLine("Posso me conectar");
+            }
+            else
+            {
+                Console.WriteLine("Não posso me conectar");
+            }
+
+            /*
+            try
+            {
+                //1
+                var connection = db.Database.GetDbConnection();
+                connection.Open();
+
+                //2
+                db.Departamentos.Any();
+                
+                Console.WriteLine("Posso me conectar");
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("Não posso me conectar");
+            }
+            */
+        }
         static void EnsureCreatedAndDelete()
         {
             using var db = new Data.ApplicationContext();
