@@ -11,7 +11,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            MigracoesJaAplicadas();
+            CarregamentoAdiantado();
         }
 
         static void HealthCheckBancoDeDados()
@@ -184,6 +184,85 @@ namespace DominandoEFCore
             foreach (var migracao in migracoes)
             {
                 Console.WriteLine($"Migração: {migracao}");
+            }
+        }
+
+        static void ScriptGeralDoBancoDeDados()
+        {
+            using var db = new Data.ApplicationContext();
+            var script = db.Database.GenerateCreateScript();
+
+            Console.WriteLine(script);
+        }
+
+        static void CarregamentoAdiantado()
+        {
+            using var db = new Data.ApplicationContext();
+            SetupTiposCarregamentos(db);
+
+            var departamentos = db
+                .Departamentos
+                .Include(p => p.Funcionarios);
+
+            foreach (var departamento in departamentos)
+            {
+                Console.WriteLine("------------------------------------------------");
+                Console.WriteLine($"Departamento: {departamento.Descricao}");
+
+                if(departamento.Funcionarios?.Any() ?? false)
+                {
+                    foreach (var funcionario in departamento.Funcionarios)
+                    {
+                        Console.WriteLine($"\tFuncionario: {funcionario.Nome}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"\tNenhum funcionario encontrado!");
+                }
+
+            }
+        }
+
+        static void SetupTiposCarregamentos(Data.ApplicationContext db)
+        {
+            if(!db.Departamentos.Any())
+            {
+                db.Departamentos.AddRange(
+                    new Domain.Departamento
+                    {
+                        Descricao = "Departamento 01",
+                        Funcionarios = new System.Collections.Generic.List<Domain.Funcionario>
+                        {
+                            new Domain.Funcionario
+                            {
+                                Nome = "Waschington Luiz",
+                                CPF = "99999999911",
+                                RG = "2100062"
+                            }
+                        }
+                    },
+                    new Domain.Departamento
+                    {
+                        Descricao = "Departamento 02",
+                        Funcionarios = new System.Collections.Generic.List<Domain.Funcionario>
+                        {
+                            new Domain.Funcionario
+                            {
+                                Nome= "Other Was",
+                                CPF = "12341234911",
+                                RG = "3100062"
+                            },
+                            new Domain.Funcionario
+                            {
+                                Nome= "Eduardo Pires",
+                                CPF = "13913234911",
+                                RG = "4100062"
+                            }
+                        }
+                    });
+                db.SaveChanges();
+                db.ChangeTracker.Clear();
             }
         }
     }
