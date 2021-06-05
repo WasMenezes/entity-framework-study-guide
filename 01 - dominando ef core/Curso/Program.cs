@@ -11,7 +11,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            AplicatMigracaoEmTempodeExecucao();
+            TodasMigracoes();
         }
 
         static void HealthCheckBancoDeDados()
@@ -149,6 +149,18 @@ namespace DominandoEFCore
         {
             using var db = new Data.ApplicationContext();
             db.Database.Migrate();
+        }
+
+        static void TodasMigracoes()
+        {
+            using var db = new Data.ApplicationContext();
+            var migracoes = db.Database.GetMigrations();
+            Console.WriteLine($"Total: {migracoes.Count()}");
+
+            foreach(var migracao in migracoes)
+            {
+                Console.WriteLine($"Migração: {migracao}");
+            }
         }
     }
 }
