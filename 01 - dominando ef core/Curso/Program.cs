@@ -12,7 +12,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            ConsultaParametrizada();
+            ConsultaInterpolada();
         }
 
         static void FiltroGlobal()
@@ -81,7 +81,21 @@ namespace DominandoEFCore
                 Console.WriteLine($"Descrição: {departamento.Descricao}");
             }
         }
+        static void ConsultaInterpolada()
+        {
+            using var db = new Data.ApplicationContext();
+            Setup(db);
 
+            var id = 1;
+            var departamentos = db.Departamentos
+                .FromSqlInterpolated($"SELECT * FROM Departamentos WHERE Id > {id}")
+                .ToList();
+
+            foreach (var departamento in departamentos)
+            {
+                Console.WriteLine($"Descrição: {departamento.Descricao}");
+            }
+        }
         static void Setup(Data.ApplicationContext db)
         {
             if (db.Database.EnsureCreated())
