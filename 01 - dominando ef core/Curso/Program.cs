@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
@@ -11,7 +12,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            ConsultaProjetada();
+            ConsultaParametrizada();
         }
 
         static void FiltroGlobal()
@@ -58,6 +59,26 @@ namespace DominandoEFCore
                 {
                     Console.WriteLine($"\t Nome: {funcionario}");
                 }
+            }
+        }
+        static void ConsultaParametrizada()
+        {
+            using var db = new Data.ApplicationContext();
+            Setup(db);
+
+            var id = new SqlParameter
+            {
+                Value = 1,
+                SqlDbType = System.Data.SqlDbType.Int
+            };
+            var departamentos = db.Departamentos
+                .FromSqlRaw("SELECT * FROM Departamentos WHERE Id > {0}", id)
+                .Where(p => !p.Excluido)
+                .ToList();
+
+            foreach (var departamento in departamentos)
+            {
+                Console.WriteLine($"Descrição: {departamento.Descricao}");
             }
         }
 
