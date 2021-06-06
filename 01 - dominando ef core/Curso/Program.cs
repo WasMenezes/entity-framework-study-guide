@@ -12,7 +12,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            CriarStoredProcedureDeConsulta();
+            ConsultaViaProcedure();
         }
 
         static void FiltroGlobal()
@@ -240,6 +240,22 @@ namespace DominandoEFCore
 
             using var db = new Data.ApplicationContext();
             db.Database.ExecuteSqlRaw(criarDepartamento);
+        }
+        static void ConsultaViaProcedure()
+        {
+            using var db = new Data.ApplicationContext();
+
+            var dep = new SqlParameter("@dep", "Departamento");
+
+            var departamentos = db.Departamentos
+                .FromSqlRaw("EXECUTE GetDepartamentos @dep", dep)
+                .ToList();
+            
+            foreach(var departamento in departamentos)
+            {
+                Console.WriteLine(departamento.Descricao);
+            }
+
         }
     }
 }
