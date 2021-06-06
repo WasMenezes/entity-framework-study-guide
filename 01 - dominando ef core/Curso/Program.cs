@@ -11,7 +11,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            CarregamentoExplicito();
+            CarregamentoLento();
         }
 
         static void HealthCheckBancoDeDados()
@@ -256,7 +256,6 @@ namespace DominandoEFCore
                 {
                     Console.WriteLine($"\tNenhum funcionario encontrado!");
                 }
-
             }
         }
 
@@ -301,5 +300,35 @@ namespace DominandoEFCore
                 db.ChangeTracker.Clear();
             }
         }
+        static void CarregamentoLento()
+        {
+            using var db = new Data.ApplicationContext();
+            SetupTiposCarregamentos(db);
+
+            //db.ChangeTracker.LazyLoadingEnabled = false;
+            
+            var departamentos = db
+                .Departamentos
+                .ToList();
+
+            foreach (var departamento in departamentos)
+            {
+                Console.WriteLine("------------------------------------------------");
+                Console.WriteLine($"Departamento: {departamento.Descricao}");
+
+                if (departamento.Funcionarios?.Any() ?? false)
+                {
+                    foreach (var funcionario in departamento.Funcionarios)
+                    {
+                        Console.WriteLine($"\tFuncionario: {funcionario.Nome}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"\tNenhum funcionario encontrado!");
+                }
+            }
+        }
+
     }
 }
