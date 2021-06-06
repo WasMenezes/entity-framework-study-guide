@@ -12,7 +12,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            CriarStoredProcedure();
+            CriarStoredProcedureDeConsulta();
         }
 
         static void FiltroGlobal()
@@ -27,7 +27,6 @@ namespace DominandoEFCore
                 Console.WriteLine($"Descrição: {departamento.Descricao}\t Excluido: {departamento.Excluido}");
             }
         }
-
         static void IgnoreFiltroGlobal()
         {
             using var db = new Data.ApplicationContext();
@@ -40,7 +39,6 @@ namespace DominandoEFCore
                 Console.WriteLine($"Descrição: {departamento.Descricao}\t Excluido: {departamento.Excluido}");
             }
         }
-
         static void ConsultaProjetada()
         {
             using var db = new Data.ApplicationContext();
@@ -218,6 +216,25 @@ namespace DominandoEFCore
                 INSERT INTO
                     Departamentos(Descricao, Ativo, Excluido)
                 VALUES (@Descricao, @Ativo, 0)
+            END
+            ";
+
+            using var db = new Data.ApplicationContext();
+            db.Database.ExecuteSqlRaw(criarDepartamento);
+        }
+        static void InserirDadosViaProcedure()
+        {
+            using var db = new Data.ApplicationContext();
+            db.Database.ExecuteSqlRaw("execute CriarDepartamento @p0, @p1", "Departamento Via Procedure", true);
+        }
+        static void CriarStoredProcedureDeConsulta()
+        {
+            var criarDepartamento = @"
+            CREATE OR ALTER PROCEDURE GetDepartamentos
+                @Descricao VARCHAR(50)
+            AS
+            BEGIN
+                SELECT * FROM Departamentos Where Descricao Like @Descricao + '%'
             END
             ";
 
