@@ -14,7 +14,7 @@ namespace DominandoEFCore.Data
         {
             const string strConnection = "Data source=(localdb)\\mssqllocaldb; Initial Catalog=DevIO-02;Integrated Security=true;pooling=true;";
             optionsBuilder
-                .UseSqlServer(strConnection, p=>p.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
+                .UseSqlServer(strConnection)
                 .EnableSensitiveDataLogging()
                 .LogTo(Console.WriteLine, LogLevel.Information);
         }
