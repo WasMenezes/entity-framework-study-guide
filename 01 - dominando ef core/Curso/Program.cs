@@ -12,7 +12,7 @@ namespace DominandoEFCore
 
         static void Main(string[] args)
         {
-            EntendendoConsulta1NN1();
+            DivisaoDeConsulta();
         }
 
         static void FiltroGlobal()
@@ -141,6 +141,27 @@ namespace DominandoEFCore
                 }
             }
             */
+        }
+        static void DivisaoDeConsulta()
+        {
+            using var db = new Data.ApplicationContext();
+            Setup(db);
+
+            var departamentos = db.Departamentos
+                .Include(p => p.Funcionarios)
+                //.AsSplitQuery()
+                .AsSingleQuery()
+                .Where(p => p.Id < 3)
+                .ToList();
+
+            foreach (var departamento in departamentos)
+            {
+                Console.WriteLine($"Descrição: {departamento.Descricao}");
+                foreach (var funcionario in departamento.Funcionarios)
+                {
+                    Console.WriteLine($"Nome: {funcionario.Nome}");
+                }
+            }
         }
         static void Setup(Data.ApplicationContext db)
         {
